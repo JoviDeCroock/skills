@@ -21,8 +21,21 @@ options.diffed = (vnode) => {
 };
 ```
 
-To unhook, never restore the saved reference as other plugins might get lost, always create a bail that will
-keep the options-chain intact.
+To unhook, never restore the saved reference as other plugins might get lost. Instead, use a bail flag so the options chain stays intact:
+
+```ts
+let active = true;
+const prev = options.diffed;
+options.diffed = (vnode) => {
+  if (active) {
+    // your logic
+  }
+  prev?.(vnode);
+};
+
+// To stop observing without breaking other plugins:
+active = false;
+```
 
 ## Available hooks and their fire order
 

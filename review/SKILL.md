@@ -52,7 +52,7 @@ Review for common vulnerabilities:
 For the API:
 - [ ] Rate limiting on sensitive endpoints
 - [ ] Proper error messages (don't leak internal details)
-- [ ] Signed URLs for file access (no direct R2 keys exposed)
+- [ ] File access uses signed/scoped URLs, not direct storage credentials
 
 ### 5. Performance
 
@@ -119,7 +119,7 @@ For the API:
 "This could be better"
 
 // Specific
-"Consider using `useSignal` here instead of `useState` since this
+"Consider using a signal here instead of `useState` since this
 value is updated frequently in the drag handler"
 ```
 

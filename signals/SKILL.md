@@ -197,7 +197,7 @@ export const WindowDragModel = createModel(({ defaultWidth, defaultHeight }) => 
 });
 
 // component
-const drag = useModel(() => new WindowDragModel({ defaultWidth: 800, defaultHeight: 600 }));
+const drag = useModel(WindowDragModel);
 ```
 
 ## Signals vs useState
