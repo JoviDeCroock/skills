@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact Setup"
+  short_description: "Choose Vite, no-build, or pipeline setup"
+  default_prompt: "Use $preact-no-build-vite-setup to set up this Preact project."
+policy:
+  allow_implicit_invocation: true

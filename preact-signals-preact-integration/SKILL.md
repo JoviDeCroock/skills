@@ -28,7 +28,7 @@ function Counter() {
 }
 ```
 
-Calling `signal()` in a component body creates a new signal on every render. This was the root cause in preactjs/signals issue 341.
+Calling `signal()` in a component body creates a new signal on every render — use `useSignal()` so the signal persists across renders.
 
 ## Rendering Choices
 
@@ -81,7 +81,7 @@ function Item({ item, showDetails }: { item: Item; showDetails: Signal<boolean> 
 }
 ```
 
-If existing `For` children do not react to parent values, pass signals down or lift the child into a component. That behavior is intentional because rerendering on arbitrary non-signal changes would remove much of `For` and `Show`'s value; see issue 853.
+If existing `For` children do not react to parent values, pass signals down or lift the child into a component. That behavior is intentional — rerendering on arbitrary non-signal changes would remove much of `For` and `Show`'s value.
 
 ## useLiveSignal
 
@@ -97,7 +97,7 @@ function Detail({ selected }: { selected: Signal<string> }) {
 }
 ```
 
-This guards against stale signal references, as discussed in issue 854.
+This guards against stale signal references when the parent swaps which signal it passes in.
 
 ## Common Mistakes
 
@@ -112,4 +112,3 @@ This guards against stale signal references, as discussed in issue 854.
 - Package docs: `node_modules/@preact/signals/README.md`
 - Online: https://github.com/preactjs/signals/blob/main/packages/preact/README.md
 - Utilities: https://github.com/preactjs/signals/blob/main/packages/preact/utils/README.md
-- Issues: preactjs/signals#341, #853, #854, #882

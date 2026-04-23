@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact TypeScript JSX"
+  short_description: "Configure Preact TS and JSX correctly"
+  default_prompt: "Use $preact-typescript-jsx to fix this Preact TypeScript JSX setup."
+policy:
+  allow_implicit_invocation: true

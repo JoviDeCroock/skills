@@ -76,4 +76,3 @@ export default [
 
 - Package docs: `node_modules/@preact/eslint-plugin-signals/README.md`
 - Online: https://github.com/preactjs/signals/blob/main/packages/eslint-plugin-signals/README.md
-- Issues motivating rules: preactjs/signals#621, #341, #772

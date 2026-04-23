@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact SSR"
+  short_description: "Implement Preact SSR and prerendering"
+  default_prompt: "Use $preact-ssr-prerendering to design this Preact SSR flow."
+policy:
+  allow_implicit_invocation: true

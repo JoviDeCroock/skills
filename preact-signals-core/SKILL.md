@@ -54,8 +54,6 @@ effect(() => {
 });
 ```
 
-This pattern came up in preactjs/signals issue 621.
-
 ## Updating Objects And Arrays
 
 Assign a new reference when the value is an object or array:
@@ -100,4 +98,3 @@ batch(() => {
 
 - Package docs: `node_modules/@preact/signals-core/README.md`
 - Online: https://github.com/preactjs/signals/blob/main/packages/core/README.md
-- Issues: preactjs/signals#333, #341, #621, #772

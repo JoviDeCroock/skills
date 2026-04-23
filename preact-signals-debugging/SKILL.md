@@ -54,4 +54,3 @@ Keep the reproduction focused:
 
 - Debug package: `node_modules/@preact/signals-debug/README.md` (https://github.com/preactjs/signals/blob/main/packages/debug/README.md)
 - Devtools: https://github.com/preactjs/signals/blob/main/packages/devtools-adapter/README.md
-- Issues: preactjs/signals#333, #338, #341, #672, #801, #853, #912

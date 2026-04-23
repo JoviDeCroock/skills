@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact Forms Events"
+  short_description: "Handle Preact form state and events"
+  default_prompt: "Use $preact-forms-events to debug this Preact form behavior."
+policy:
+  allow_implicit_invocation: true

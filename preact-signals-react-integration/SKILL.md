@@ -75,7 +75,7 @@ Signals as DOM attributes are not supported by the React integration. Use `.valu
 <input checked={enabled.value} onChange={e => (enabled.value = e.currentTarget.checked)} />
 ```
 
-This confusion appears repeatedly in issue 801. It may have worked accidentally in some React 18 setups, but it is not a documented guarantee and is especially visible with React 19.
+Passing a bare signal as a DOM attribute may have worked accidentally in some React 18 setups, but it is not a documented guarantee and is especially visible with React 19 — always read `.value`.
 
 ## SSR And Render Props
 
@@ -95,4 +95,3 @@ This confusion appears repeatedly in issue 801. It may have worked accidentally 
 - Package docs: `node_modules/@preact/signals-react/README.md`
 - Online: https://github.com/preactjs/signals/blob/main/packages/react/README.md
 - Transform docs: https://github.com/preactjs/signals/blob/main/packages/react-transform/README.md
-- Issues: preactjs/signals#298, #801, #612, #652

@@ -42,8 +42,6 @@ Use `htm/preact`, not `htm/preact/standalone`, when signals are involved:
 </script>
 ```
 
-This follows the fix from preactjs/signals issue 672.
-
 ## Diagnosis Checklist
 
 - Replace `htm/preact/standalone` with `htm/preact`.
@@ -72,4 +70,3 @@ This follows the fix from preactjs/signals issue 672.
 
 - Preact no-build guide: https://preactjs.com/guide/v10/no-build-workflows
 - Preact llms documentation: https://preactjs.com/llms.txt
-- Issues: preactjs/signals#338, #672, #303, #912

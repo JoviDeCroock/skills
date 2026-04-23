@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact Hydration Mismatches"
+  short_description: "Diagnose Preact SSR hydration pitfalls"
+  default_prompt: "Use $preact-hydration-mismatches to debug this Preact SSR hydration mismatch."
+policy:
+  allow_implicit_invocation: true

@@ -63,4 +63,3 @@ expect(screen.getByText("1")).toBeInTheDocument();
 
 - Vitest: https://vitest.dev/
 - Testing Library: https://testing-library.com/docs/
-- Issue: preactjs/signals#521

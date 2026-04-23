@@ -113,4 +113,3 @@ For values inside `For` children that should keep updating after the child is ca
 
 - Preact utilities: https://github.com/preactjs/signals/blob/main/packages/preact/utils/README.md
 - React utilities: https://github.com/preactjs/signals/blob/main/packages/react/utils/README.md
-- Issue: preactjs/signals#854

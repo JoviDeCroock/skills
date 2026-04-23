@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact Compat Aliasing"
+  short_description: "Configure React aliases for Preact compat"
+  default_prompt: "Use $preact-compat-aliasing to configure this React library for Preact."
+policy:
+  allow_implicit_invocation: true

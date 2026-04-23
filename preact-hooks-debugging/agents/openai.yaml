@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact Hooks Debugging"
+  short_description: "Trace invalid hooks and duplicate Preact"
+  default_prompt: "Use $preact-hooks-debugging to diagnose this Preact hooks error."
+policy:
+  allow_implicit_invocation: true

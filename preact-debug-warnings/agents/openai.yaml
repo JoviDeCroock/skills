@@ -1,0 +1,6 @@
+interface:
+  display_name: "Preact Debug Warnings"
+  short_description: "Use and extend preact/debug warnings"
+  default_prompt: "Use $preact-debug-warnings to interpret this Preact debug warning."
+policy:
+  allow_implicit_invocation: true
