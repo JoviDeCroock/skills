@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals Preact"
+  short_description: "Use Signals inside Preact components"
+  default_prompt: "Use $preact-signals-preact-integration to fix this Preact Signals component behavior."

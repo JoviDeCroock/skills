@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals Testing"
+  short_description: "Test Preact Signals behavior"
+  default_prompt: "Use $preact-signals-testing to add focused tests for this signal-driven behavior."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals Models"
+  short_description: "Design Signals models and utilities"
+  default_prompt: "Use $preact-signals-models-utils to design this Preact Signals model."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals React"
+  short_description: "Use Signals inside React apps"
+  default_prompt: "Use $preact-signals-react-integration to diagnose this React Signals tracking issue."

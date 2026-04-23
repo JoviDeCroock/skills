@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals ESLint"
+  short_description: "Configure and extend Signals lint rules"
+  default_prompt: "Use $preact-signals-eslint-plugin to add or configure a lint rule for this Signals misuse."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals Debugging"
+  short_description: "Debug stale Preact Signals updates"
+  default_prompt: "Use $preact-signals-debugging to triage this stale update in Preact Signals."

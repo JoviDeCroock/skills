@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals No Build"
+  short_description: "Fix CDN and import-map Signals apps"
+  default_prompt: "Use $preact-signals-no-build to fix this no-build Preact Signals example."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preact Signals Core"
+  short_description: "Core Preact Signals reactivity"
+  default_prompt: "Use $preact-signals-core to debug why this signal graph is not updating correctly."
