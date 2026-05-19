@@ -1,0 +1,4 @@
+interface:
+  display_name: "npm Trusted Publishing"
+  short_description: "Harden npm publish workflows with OIDC"
+  default_prompt: "Use $npm-trusted-publishing to convert or review this npm release workflow for trusted publishing, no publish-path caching, pinned actions, npm package trust settings, and GitHub environment protection."
