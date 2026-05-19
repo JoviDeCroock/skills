@@ -51,6 +51,12 @@ Model-loadable skills for code-assistant harnesses working on Preact and the `@p
 |---|---|
 | [preact-options-hooks](preact-options-hooks/SKILL.md) | Building plugins/devtools via `options` hooks, internal VNode access |
 
+### Release engineering
+
+| Skill | When it loads |
+|---|---|
+| [npm-trusted-publishing](npm-trusted-publishing/SKILL.md) | npm trusted publishing, OIDC, GitHub environments, pinned actions, and publish-path cache hardening |
+
 ### General
 
 | Skill | When it loads |
