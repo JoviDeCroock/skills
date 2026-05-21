@@ -15,6 +15,7 @@ Prefer npm trusted publishing over long-lived `NPM_TOKEN` publishes. The safe sh
 - Publish-path dependency caching is disabled.
 - Every external GitHub Action in the publish workflow is pinned to a full commit SHA with the original tag kept as a comment.
 - npm package settings require 2FA and disallow token publishes.
+- npm trusted publisher allowed actions are narrowed to `npm stage publish` only when the workflow uses staged publishing.
 
 Do not treat the workflow PR as complete until the human/package-owner has configured the npm and GitHub-side trust controls.
 
@@ -152,12 +153,47 @@ jobs:
 
 Keep the build/test job separate from the OIDC publish job. If the publish job installs dependencies, disable setup-node's package-manager cache there too.
 
+### Mirroring Direct Publish Changes to Maintenance Branches
+
+For repos with active release branches, mirror staged-publishing workflow changes onto each branch that can still publish.
+
+Example: `preactjs/preact` needed the same release workflow change on both `main` and `v10.x`:
+
+1. Inspect the source PR and exact workflow diff:
+   ```bash
+   gh pr view <pr> --repo <owner>/<repo> --json title,baseRefName,headRefName,commits,files,url,state
+   git fetch origin main v10.x pull/<pr>/head:pr-<pr> --prune
+   git show --stat --patch <source-sha> -- .github/workflows/release.yml
+   ```
+2. Create a branch from the maintenance branch and cherry-pick the workflow commit:
+   ```bash
+   git checkout -B <topic>-v10 origin/v10.x
+   git cherry-pick <source-sha>
+   ```
+3. Verify the maintenance-branch workflow contains the exact staged-publish shape:
+   ```bash
+   python3 - <<'PY'
+   from pathlib import Path
+   s = Path('.github/workflows/release.yml').read_text()
+   assert 'npm install -g npm@11.15.0' in s
+   assert 'npm stage publish' in s
+   PY
+   ```
+4. Push and open a PR against the maintenance branch, not the default branch:
+   ```bash
+   git push -u origin HEAD
+   gh pr create --base v10.x --head <branch> --title "Use npm staged publishing" --body-file /tmp/pr.md
+   ```
+
+Do not assume release workflow hardening on `main` protects older published lines. If `v10.x`, `v9.x`, or another branch can tag and publish independently, mirror the change or explicitly document why it is out of support.
+
 ## Staged Publishing
 
 Use staged publishing when CI should upload release artifacts but a maintainer should still approve the public release with 2FA.
 
 - Requires npm CLI `11.15.0` or later and Node `22.14.0` or later.
 - Replace direct `npm publish` with `npm stage publish` in trusted publish jobs.
+- Configure the npm trusted publisher's **Allowed actions** to allow `npm stage publish` and disallow `npm publish`; otherwise OIDC can still publish directly and bypass the staged approval gate.
 - For Changesets repos, use a small repository script such as `.github/scripts/stage-packages.mjs` to find unpublished package versions and call `npm stage publish <package-dir> --provenance --access public --tag <tag>`.
 - Capture and surface all stage IDs in CI logs; maintainers approve after review with `npm stage approve <stage-id>` or on npmjs.com.
 - Do not put public-release side effects in package `postpublish` hooks; those run during staging, not final approval.
@@ -190,13 +226,15 @@ Rules:
 
 After changing the workflow, prompt the package owner to configure npm. Trusted publishing is not active from GitHub YAML alone.
 
-Ask them to do one of these:
+Ask them to do one of these. For staged-publishing workflows, the trust relationship should be stage-only:
 
 ```bash
-npm install -g npm@^11.10.0
-npm trust github --repo <owner>/<repo> --file <workflow.yml> --env npm <package>
+npm install -g npm@^11.15.0
+npm trust github --repo <owner>/<repo> --file <workflow.yml> --env npm --allow-stage-publish --no-allow-publish <package>
 npm trust list <package>
 ```
+
+If a repo intentionally still publishes directly from CI, use `--allow-publish` instead; do not enable both unless there is a concrete transition reason and the PR calls that out.
 
 Or configure it in npmjs.com:
 
@@ -205,6 +243,7 @@ Or configure it in npmjs.com:
 - Repository: `<owner>/<repo>`
 - Workflow filename: `<workflow.yml>`
 - Environment: `npm`
+- Allowed actions: enable **npm stage publish** and disable **npm publish** for staged-publishing workflows
 
 Also ask them to set package publishing access to:
 
@@ -280,6 +319,7 @@ Include this in the PR body:
 - [ ] Publish-path caching is disabled.
 - [ ] External actions in the trusted publish workflow are pinned to SHAs.
 - [ ] npm trusted publisher configured for `<owner>/<repo>` + `<workflow.yml>` + `npm` environment.
+- [ ] npm trusted publisher allowed actions are stage-only: `npm stage publish` enabled, `npm publish` disabled.
 - [ ] npm package publishing access set to require 2FA and disallow tokens.
 - [ ] GitHub `npm` environment has required reviewers and protected-branch deployment policy.
 - [ ] Default branch protection requires PR review for workflow/config changes.
@@ -291,5 +331,6 @@ Include this in the PR body:
 - Keeping setup-node caching because the install is slow. The publish path should optimize for supply-chain safety, not speed.
 - Pinning `actions/checkout` but forgetting `changesets/action`, `pnpm/action-setup`, `actions/github-script`, or `actions/download-artifact`.
 - Configuring npm trust without the same environment name used in the workflow.
+- Leaving `npm publish` enabled in the trusted publisher allowed actions after switching CI to `npm stage publish`; OIDC could still publish directly if a workflow regresses.
 - Running `npm trust` once in a workspace and assuming it configured every package; the command is package-oriented and currently unaware of workspaces, so configure each published package explicitly.
 - Using self-hosted GitHub runners for npm trusted publishing; npm trusted publishing requires supported hosted CI runners.
