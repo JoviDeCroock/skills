@@ -153,40 +153,6 @@ jobs:
 
 Keep the build/test job separate from the OIDC publish job. If the publish job installs dependencies, disable setup-node's package-manager cache there too.
 
-### Mirroring Direct Publish Changes to Maintenance Branches
-
-For repos with active release branches, mirror staged-publishing workflow changes onto each branch that can still publish.
-
-Example: `preactjs/preact` needed the same release workflow change on both `main` and `v10.x`:
-
-1. Inspect the source PR and exact workflow diff:
-   ```bash
-   gh pr view <pr> --repo <owner>/<repo> --json title,baseRefName,headRefName,commits,files,url,state
-   git fetch origin main v10.x pull/<pr>/head:pr-<pr> --prune
-   git show --stat --patch <source-sha> -- .github/workflows/release.yml
-   ```
-2. Create a branch from the maintenance branch and cherry-pick the workflow commit:
-   ```bash
-   git checkout -B <topic>-v10 origin/v10.x
-   git cherry-pick <source-sha>
-   ```
-3. Verify the maintenance-branch workflow contains the exact staged-publish shape:
-   ```bash
-   python3 - <<'PY'
-   from pathlib import Path
-   s = Path('.github/workflows/release.yml').read_text()
-   assert 'npm install -g npm@11.15.0' in s
-   assert 'npm stage publish' in s
-   PY
-   ```
-4. Push and open a PR against the maintenance branch, not the default branch:
-   ```bash
-   git push -u origin HEAD
-   gh pr create --base v10.x --head <branch> --title "Use npm staged publishing" --body-file /tmp/pr.md
-   ```
-
-Do not assume release workflow hardening on `main` protects older published lines. If `v10.x`, `v9.x`, or another branch can tag and publish independently, mirror the change or explicitly document why it is out of support.
-
 ## Staged Publishing
 
 Use staged publishing when CI should upload release artifacts but a maintainer should still approve the public release with 2FA.
