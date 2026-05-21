@@ -58,7 +58,7 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - run: pnpm install --frozen-lockfile --ignore-scripts
-      - run: npm install -g npm@11.11.1
+      - run: npm install -g npm@11.15.0
       - id: changesets
         uses: changesets/action@<sha> # vX
         with:
@@ -90,11 +90,11 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
       - run: pnpm install --frozen-lockfile --ignore-scripts
-      - run: npm install -g npm@11.11.1
+      - run: npm install -g npm@11.15.0
       - run: pnpm build
       - uses: changesets/action@<sha> # vX
         with:
-          publish: pnpm exec changeset publish
+          publish: node .github/scripts/stage-packages.mjs
           commitMode: github-api
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -140,17 +140,27 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
-      - run: npm install -g npm@11.11.1
+      - run: npm install -g npm@11.15.0
       - name: Validate package
         run: |
           # Verify tarball package name and version match the tag before publishing.
       - name: Determine dist-tag
         run: |
           # Stable tags publish as latest; prereleases only use approved tags.
-      - run: npm publish <package>.tgz --provenance --access public --tag "${{ steps.dist-tag.outputs.tag }}"
+      - run: npm stage publish <package>.tgz --provenance --access public --tag "${{ steps.dist-tag.outputs.tag }}"
 ```
 
 Keep the build/test job separate from the OIDC publish job. If the publish job installs dependencies, disable setup-node's package-manager cache there too.
+
+## Staged Publishing
+
+Use staged publishing when CI should upload release artifacts but a maintainer should still approve the public release with 2FA.
+
+- Requires npm CLI `11.15.0` or later and Node `22.14.0` or later.
+- Replace direct `npm publish` with `npm stage publish` in trusted publish jobs.
+- For Changesets repos, use a small repository script such as `.github/scripts/stage-packages.mjs` to find unpublished package versions and call `npm stage publish <package-dir> --provenance --access public --tag <tag>`.
+- Capture and surface all stage IDs in CI logs; maintainers approve after review with `npm stage approve <stage-id>` or on npmjs.com.
+- Do not put public-release side effects in package `postpublish` hooks; those run during staging, not final approval.
 
 ## Disable Publish-Path Caching
 
