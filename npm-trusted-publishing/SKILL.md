@@ -17,6 +17,10 @@ Prefer npm trusted publishing over long-lived `NPM_TOKEN`/`NODE_AUTH_TOKEN` publ
 
 This skill is intentionally security-biased, but do not apply every hardening step blindly. Separate what is required for npm trusted publishing from optional release-process hardening, and call out anything the package owner must configure outside the pull request.
 
+The goal is to reduce risk areas, if a push to main can just publish then a compromised SSH key or GitHub account is enough to introduce risk to the ecosystem.
+
+People can use https://drydock.org to do security scanning on staged publishes or configure custom GitHub environment gates.
+
 ## When to Use
 
 Use this when:
