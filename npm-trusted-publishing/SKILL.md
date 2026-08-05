@@ -2,7 +2,6 @@
 name: npm-trusted-publishing
 description: Use when hardening npm package release workflows with trusted publishing, OIDC, GitHub environments, pinned GitHub Actions, disabled publish-path caching, Changesets release PRs, direct tag-based npm publish flows, staged publishing, or npm release-supply-chain reviews.
 version: 1.0.0
-author: Hermes Agent
 license: MIT
 metadata:
   hermes:
@@ -42,6 +41,7 @@ Do not use this as the only guide for:
 |---|---|
 | npm trusted publishing | npm CLI `>=11.5.1`, Node `>=22.14.0`, supported hosted CI runner, configured npm trusted publisher, `id-token: write` on the publish job |
 | npm staged publishing | npm CLI `>=11.15.0`, Node `>=22.14.0`, `npm stage publish`, maintainer approval/rejection with 2FA |
+| pnpm staged publishing | npm CLI `>=11.3.0`, Node `>=22.14.0`, `pnpm stage publish`, maintainer approval/rejection with 2FA |
 | GitHub Actions trusted publisher | GitHub-hosted runners only unless npm docs say otherwise; configure the workflow filename and optional environment on npmjs.com |
 | Provenance | Generated automatically by npm when using trusted publishing; private source repositories may not get public provenance |
 
@@ -161,7 +161,7 @@ jobs:
 
 Add an unpublished-package check when a merge to `main` can happen without a publishable version. In monorepos, skip fixture/example packages, private packages, and the workspace root unless it is intentionally published.
 
-`npm stage` is unaware of workspaces. Scripts such as `.github/scripts/stage-packages.mjs` must explicitly iterate package directories and stage each published package separately.
+`npm stage`/`pnpm stage` is unaware of workspaces. Scripts such as `.github/scripts/stage-packages.mjs` must explicitly iterate package directories and stage each published package separately.
 
 ## Direct Tag Publish Flow
 
