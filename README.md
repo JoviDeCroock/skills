@@ -1,6 +1,6 @@
 # Skills
 
-Model-loadable skills for code-assistant harnesses working on Preact and the `@preact/signals` ecosystem. Each skill is a directory with a `SKILL.md` (Anthropic-format frontmatter + markdown body) and an `agents/openai.yaml` manifest for OpenAI Apps SDK consumers.
+Model-loadable skills for code-assistant harnesses working on Preact, the `@preact/signals` ecosystem, and adjacent web engineering topics. Each skill is a directory with a `SKILL.md` (Anthropic-format frontmatter + markdown body) and an `agents/openai.yaml` manifest for OpenAI Apps SDK consumers.
 
 ## Index
 
@@ -56,6 +56,12 @@ Model-loadable skills for code-assistant harnesses working on Preact and the `@p
 | Skill | When it loads |
 |---|---|
 | [npm-trusted-publishing](npm-trusted-publishing/SKILL.md) | npm trusted publishing, OIDC, GitHub environments, pinned actions, and publish-path cache hardening |
+
+### Performance
+
+| Skill | When it loads |
+|---|---|
+| [web-performance-patterns](web-performance-patterns/SKILL.md) | Profiling and optimizing JS/CSS/DOM hot paths, allocations, data structures, INP, `tsc` speed, and reviewing perf PRs |
 
 ### General
 

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Web Performance Patterns"
+  short_description: "Measure-first playbook for JS, CSS, and INP performance work"
+  default_prompt: "Use $web-performance-patterns to find, apply, and validate performance improvements in this code — profiling first, then the priority ladder from doing less work down to micro-optimization."
+policy:
+  allow_implicit_invocation: true
