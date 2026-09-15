@@ -13,7 +13,7 @@ metadata:
 
 ## Overview
 
-Prefer npm trusted publishing over long-lived `NPM_TOKEN`/`NODE_AUTH_TOKEN` publishes. Trusted publishing lets npm accept publishes from one configured CI workflow identity via OIDC instead of a reusable secret.
+Prefer npm trusted publishing over long-lived `NPM_TOKEN`/`NODE_AUTH_TOKEN` publishes. Trusted publishing lets npm accept publishes from explicitly configured CI workflow identities via OIDC instead of a reusable secret.
 
 This skill is intentionally security-biased, but do not apply every hardening step blindly. Separate what is required for npm trusted publishing from optional release-process hardening, and call out anything the package owner must configure outside the pull request.
 
@@ -55,7 +55,7 @@ Use `npm@11.15.0` or newer when the workflow stages packages. For direct trusted
 
 The safe shape is:
 
-- npm trusts one exact GitHub Actions workflow filename, usually with the `npm` environment.
+- npm trusts only the exact GitHub Actions workflow/environment combinations that need to publish. A package can have separate configurations for stable, canary, prerelease, or other release channels.
 - Only the final publish/stage job has `permissions: id-token: write`; release-PR, test, and build jobs do not.
 - The publish job is gated by a GitHub environment with required reviewers and branch/deployment restrictions when the repo can support it.
 - Publish-path dependency/build caching is disabled, or the job publishes a verified artifact produced by a trusted job in the same run.
@@ -64,6 +64,20 @@ The safe shape is:
 - For staged publishing, the npm trusted publisher's allowed actions enable `npm stage publish` and disable `npm publish`.
 
 Do not treat a workflow PR as complete until the package owner has configured npm-side trust and reviewed GitHub-side environment controls. GitHub YAML alone does not enable trusted publishing.
+
+## Multiple Publishing Configurations and Channels
+
+npm packages can have up to 10 trusted publisher configurations at once. Use separate configurations when stable, canary, prerelease, or staging releases originate from different workflows or environments; do not collapse those paths into one workflow or keep a long-lived token merely because the package has multiple release channels.
+
+Treat the configurations as an additive allowlist:
+
+- Each configuration independently names its provider, repository/project, workflow, optional environment, and allowed actions.
+- An OIDC publish or stage is authorized when **any one** configuration matches. Configurations do not restrict each other, and evaluation order is not guaranteed.
+- Audit the union of every configuration. A stage-only stable configuration does not make the package stage-only if a canary configuration still permits direct `npm publish`.
+- New configurations allow `npm stage publish` by default; direct `npm publish` is opt-in per configuration. Keep each channel stage-only unless that channel has an explicit reason to bypass staged approval.
+- Existing configurations cannot be edited in place. Changing a workflow or environment requires deleting and recreating the configuration; keep any overlap window short because both configurations authorize publishing while present.
+
+Preserve existing channel semantics during migration. Inventory every stable, canary, beta, next, prerelease, and manual release path, then create the narrow npm configuration each one needs before removing its token. Match each workflow's intended dist-tag and environment independently; never let a canary path publish to `latest`.
 
 ## First-Pass Audit
 
@@ -247,6 +261,8 @@ If publish logic lives in a reusable workflow called via `workflow_call`, config
 
 In the PR body, name the exact workflow filename the package owner must configure on npmjs.com.
 
+If the package has several caller workflows—for example `release.yml` for stable and `canary.yml` for canaries—configure each caller as a separate trusted publisher. Do not force all channels through one caller solely to work around the former one-configuration limit.
+
 ## Staged Publishing
 
 Use staged publishing when CI should upload release artifacts but a maintainer should still approve the public release with 2FA.
@@ -310,7 +326,7 @@ Tradeoff: SHA pinning improves release-path integrity but adds maintenance burde
 
 After changing the workflow, prompt the package owner to configure npm. Trusted publishing is not active from GitHub YAML alone.
 
-For staged-publishing workflows, the trust relationship should be stage-only:
+For staged-publishing workflows, each trust relationship should be stage-only:
 
 ```bash
 npm install -g npm@^11.15.0
@@ -328,6 +344,8 @@ Or configure it in npmjs.com:
 - Workflow filename: `<workflow.yml>`; filename only, not `.github/workflows/<file>`
 - Environment: `npm`, if the workflow uses `environment: npm`
 - Allowed actions: enable **npm stage publish** and disable **npm publish** for staged-publishing workflows
+
+Use **Add trusted publisher** again for each additional stable, canary, prerelease, or provider-specific workflow. npm permits up to 10 configurations per package. Review all entries together because any matching configuration can authorize its allowed action.
 
 Also ask them to set package publishing access to:
 
@@ -445,11 +463,13 @@ Agent-verifiable:
 - [ ] Unsafe triggers (`pull_request`, `pull_request_target`, untrusted `workflow_run`) cannot publish.
 - [ ] Tag/package/tarball validation exists for direct tag flows.
 - [ ] Reusable workflow/caller workflow identity is documented when relevant.
+- [ ] Every stable, canary, prerelease, and manual publish path retains its intended dist-tag and has a matching trusted publisher configuration or is explicitly retired.
 
 Human/package-owner-verifiable:
 
-- [ ] npm trusted publisher configured for `<owner>/<repo>` + `<workflow.yml>` + `npm` environment, if used.
-- [ ] For staged publishing, npm trusted publisher allowed actions are stage-only: `npm stage publish` enabled, `npm publish` disabled.
+- [ ] npm trusted publishers are configured for every required `<owner>/<repo>` + `<workflow.yml>` + environment combination.
+- [ ] The union of all trusted publisher configurations was reviewed; no alternate channel unintentionally preserves direct-publish authority.
+- [ ] For staged publishing, each relevant trusted publisher is stage-only: `npm stage publish` enabled, `npm publish` disabled.
 - [ ] npm package publishing access set to require 2FA and disallow tokens.
 - [ ] GitHub `npm` environment has required reviewers and protected-branch deployment policy.
 - [ ] Default branch protection requires PR review for workflow/config changes.
@@ -464,6 +484,8 @@ Human/package-owner-verifiable:
 - Pinning `actions/checkout` but forgetting `changesets/action`, `pnpm/action-setup`, `actions/github-script`, `actions/download-artifact`, or semantic-release-related actions.
 - Configuring npm trust without the same environment name used in the workflow.
 - Configuring the reusable workflow file instead of the caller workflow file on npmjs.com.
+- Assuming one narrow trusted publisher constrains the others. Configurations are additive, so any matching canary, legacy, or alternate-provider entry can still authorize its allowed action.
+- Replacing multiple stable/canary/prerelease workflows with one workflow—or retaining a token—because npm formerly allowed only one trusted publisher configuration per package.
 - Leaving `npm publish` enabled in the trusted publisher allowed actions after switching CI to `npm stage publish`; OIDC could still publish directly if a workflow regresses.
 - Running `npm trust` once in a workspace and assuming it configured every package; the command is package-oriented and `npm stage` is currently workspace-unaware.
 - Using self-hosted GitHub runners for npm trusted publishing when npm only supports GitHub-hosted runners.
